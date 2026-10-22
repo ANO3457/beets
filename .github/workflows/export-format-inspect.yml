@@ -1,0 +1,19 @@
+name: Inspect export documentation formatting
+on:
+  push:
+    branches: [validation/export-5411-docs]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install uv
+      - run: uv sync --locked --group docs
+      - run: uv run docstrfmt --version
+      - run: uv run docstrfmt --preserve-adornments docs/plugins/export.rst
+      - run: git diff -- docs/plugins/export.rst
